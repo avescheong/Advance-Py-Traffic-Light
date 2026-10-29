@@ -22,3 +22,4 @@ function renderGoalChecklist(codeText) {
     }
 
 Argon.renderGoalChecklist = renderGoalChecklist;
+window.renderGoalChecklist = renderGoalChecklist;

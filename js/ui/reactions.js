@@ -1,99 +1,101 @@
 /**
  * Argon - Live Typing Reactive Graphic Engine
  * Reacts to every keystroke before Run is pressed:
- * live traffic lamp preview, car headlights/brakes, radar scan, speedometer gauge.
+ * dynamically parses variable assignments and live action calls for any module!
  */
 window.Argon = window.Argon || {};
 
-function triggerLiveGraphicReactions(codeText) {
-      if (running || S) return; // Don't override active step execution
+(function() {
+  function triggerLiveGraphicReactions(codeText) {
+    const car = $("#car");
+    const bubble = $("#bubble");
+    const stopLine = $("#stopLine");
+    const badge = $("#liveBadge");
 
-      const car = $("#car");
-      const bubble = $("#bubble");
-      const stopLine = $("#stopLine");
-      const pole = $("#trafficPole");
-      const gauge = $("#gauge");
-      const ruler = $("#ruler");
-      const zebra = $("#zebraCross");
-      const badge = $("#liveBadge");
+    if (!car || !bubble) return;
 
-      // Strip comments for live analysis
-      const cleanCode = codeText.split("\n").map(l => l.replace(/#.*$/, "")).join("\n");
+    const lesson = LESSONS[cur] || {};
+    const cleanCode = (codeText || "")
+      .split("\n")
+      .map(l => l.replace(/#.*$/, ""))
+      .join("\n");
 
-      // 1. Live Variable Assignment Previews (e.g. light = "red", speed = 80, distance = 4, weather = "rainy")
-      const lesson = LV[cur];
-      const baseEnv = Object.assign({}, lesson.base || {}, lesson.sc && lesson.sc[0] ? lesson.sc[0] : {});
-      delete baseEnv.want;
-      delete baseEnv.label;
+    // 1. Dynamic Variable Assignment Parsing: varName = value
+    const baseEnv = Object.assign({}, lesson.base || {}, lesson.sc && lesson.sc[0] ? lesson.sc[0] : {});
+    const dynamicEnv = Object.assign({}, baseEnv);
+    const assignRegex = /\b([a-zA-Z_]\w*)\s*=\s*(True|False|\d+(?:\.\d+)?|"[^"\\]*"|'[^'\\]*')/g;
+    let match;
+    while ((match = assignRegex.exec(cleanCode)) !== null) {
+      const varName = match[1];
+      const rawVal = match[2];
+      let val;
+      if (rawVal === "True") val = true;
+      else if (rawVal === "False") val = false;
+      else if (/^\d/.test(rawVal)) val = Number(rawVal);
+      else val = rawVal.slice(1, -1);
+      dynamicEnv[varName] = val;
+    }
+    setScene(dynamicEnv);
 
-      const lightAssign = cleanCode.match(/\blight\s*=\s*["'](red|yellow|green)["']/);
-      if (lightAssign) baseEnv.light = lightAssign[1];
+    // 2. Car LiDAR Radar Waves spin when conditions are present
+    const hasCondition = /\b(if|elif)\b/.test(cleanCode);
+    const lidarDome = $("#lidarDome");
+    if (lidarDome) {
+      lidarDome.setAttribute("fill", hasCondition ? "#f59e0b" : "#38bdf8");
+    }
 
-      const speedAssign = cleanCode.match(/\bspeed\s*=\s*(\d+)/);
-      if (speedAssign) baseEnv.speed = parseInt(speedAssign[1], 10);
+    // 3. Dynamic Action Previews
+    const activeReactions = [];
+    const availableActions = Argon.getActions ? Argon.getActions() : ["go", "stop", "slow", "crawl"];
+    availableActions.forEach(act => {
+      const pattern = new RegExp(`\\b${act}\\s*\\(\\s*\\)`);
+      if (pattern.test(cleanCode)) {
+        const icon = Argon.getActionIcon(act) || "?";
+        activeReactions.push(`${icon} ${act}() ready`);
+      }
+    });
 
-      const distAssign = cleanCode.match(/\bdistance\s*=\s*(\d+)/);
-      if (distAssign) baseEnv.distance = parseInt(distAssign[1], 10);
+    const hasStop = /\bstop\s*\(\s*\)/.test(cleanCode);
+    const hasGo = /\bgo\s*\(\s*\)/.test(cleanCode);
+    const hasSlow = /\bslow\s*\(\s*\)/.test(cleanCode);
 
-      const pathAssign = cleanCode.match(/\bpath\s*=\s*["'](clear|busy|blocked)["']/);
-      if (pathAssign) baseEnv.path = pathAssign[1];
+    if (stopLine) stopLine.classList.toggle("active-stop", hasStop);
 
-      const weatherAssign = cleanCode.match(/\bweather\s*=\s*["'](sunny|rainy)["']/);
-      if (weatherAssign) baseEnv.weather = weatherAssign[1];
+    const beam = $("#headlightBeam");
+    if (beam) {
+      beam.setAttribute("opacity", hasGo ? "0.85" : hasSlow ? "0.55" : "0.15");
+    }
+    const brakeGlow = $("#brakeGlow");
+    if (brakeGlow) {
+      brakeGlow.setAttribute("opacity", hasStop ? "0.9" : "0.05");
+    }
 
-      const sirenAssign = cleanCode.match(/\bsiren\s*=\s*(True|False)/);
-      if (sirenAssign) baseEnv.siren = sirenAssign[1] === "True";
-
-      setScene(baseEnv);
-
-      // 2. Highlight sensors mentioned in the student's code
-      pole.classList.toggle("sensor-focus", /\blight\b/.test(cleanCode));
-      gauge.classList.toggle("sensor-focus", /\bspeed\b/.test(cleanCode));
-      ruler.classList.toggle("sensor-focus", /\bdistance\b/.test(cleanCode));
-      zebra.classList.toggle("sensor-focus", /\bpath\b/.test(cleanCode));
-
-      // 3. Car LiDAR Radar Waves spin when `if` or `elif` is present
-      const hasCondition = /\b(if|elif)\b/.test(cleanCode);
-      car.classList.toggle("scanning", hasCondition);
-
-      // 4. Car Live Action Previews (Headlights, Brake lights, Turtle badge, Engine rev)
-      const hasGo = /\bgo\s*\(\s*\)/.test(cleanCode);
-      const hasStop = /\bstop\s*\(\s*\)/.test(cleanCode);
-      const hasSlow = /\bslow\s*\(\s*\)/.test(cleanCode);
-      const hasCrawl = /\bcrawl\s*\(\s*\)/.test(cleanCode);
-
-      car.classList.toggle("lights-on", hasGo);
-      car.classList.toggle("preview-rev", hasGo && !hasStop);
-      car.classList.toggle("braking", hasStop || hasSlow);
-      car.classList.toggle("crawling", hasCrawl);
-      stopLine.classList.toggle("active-stop", hasStop);
-
-      // 5. Live Status Bubble & Badge Feedback
-      const activeReactions = [];
-      if (lightAssign) activeReactions.push(`📦 light="${lightAssign[1]}"`);
-      if (hasCondition) activeReactions.push(`📡 LiDAR Scanning`);
-      if (hasGo) activeReactions.push(`🟢 go() ready`);
-      if (hasStop) activeReactions.push(`🛑 stop() ready`);
-      if (hasSlow) activeReactions.push(`🟡 slow() ready`);
-      if (hasCrawl) activeReactions.push(`🐢 crawl() ready`);
-
-      if (activeReactions.length) {
-        bubble.textContent = "⚡ Live: " + activeReactions.join(" · ");
-        badge.textContent = "🟢 Live Graphic Link Active";
+    // 4. Live Badge Feedback
+    if (badge) {
+      if (activeReactions.length > 0) {
+        badge.textContent = `? Live: ${activeReactions.join(" ? ")}`;
+        badge.classList.add("active");
+      } else if (hasCondition) {
+        badge.textContent = "?? LiDAR Question Active";
+        badge.classList.add("active");
       } else {
-        bubble.textContent = "";
-        badge.textContent = "⚡ Live Sensor Link Ready";
+        badge.textContent = "? Live Sensor Link Ready";
+        badge.classList.remove("active");
       }
     }
+  }
 
-function handleLiveCodeInput() {
-      const codeText = $("#code").value;
-      updateLineNumbers();
-      renderGoalChecklist(codeText);
-      buildLiveBrainFlowchart(codeText);
-      triggerLiveGraphicReactions(codeText);
-      updateCoachPipLiveFeedback(codeText);
-    }
+  function handleLiveCodeInput() {
+    const codeText = $("#code") ? $("#code").value : "";
+    updateLineNumbers();
+    renderGoalChecklist(codeText);
+    buildLiveBrainFlowchart(codeText);
+    triggerLiveGraphicReactions(codeText);
+    updateCoachPipLiveFeedback(codeText);
+  }
 
-Argon.triggerLiveGraphicReactions = triggerLiveGraphicReactions;
-Argon.handleLiveCodeInput = handleLiveCodeInput;
+  Argon.triggerLiveGraphicReactions = triggerLiveGraphicReactions;
+  Argon.handleLiveCodeInput = handleLiveCodeInput;
+  window.triggerLiveGraphicReactions = triggerLiveGraphicReactions;
+  window.handleLiveCodeInput = handleLiveCodeInput;
+})();

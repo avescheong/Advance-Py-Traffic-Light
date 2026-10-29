@@ -66,12 +66,14 @@ function prepareTestSuiteExecution() {
           return null;
         }
         if (!ev.some(x => x.k === "call")) {
-          ev.push({ k: "call", n: 0, f: "go", auto: true });
+          const defaultAction = L.defaultAction || "go";
+          ev.push({ k: "call", n: 0, f: defaultAction, auto: true });
         }
         const calls = ev.filter(x => x.k === "call");
         const got = calls[calls.length - 1].f;
         let good = L.free || got === sc.want;
-        if (cur >= 3 && !L.free && ev.some(e => e.auto)) {
+        const requireExplicitAction = L.requireExplicitAction !== undefined ? L.requireExplicitAction : (cur >= 3);
+        if (requireExplicitAction && !L.free && ev.some(e => e.auto)) {
           good = false;
         }
         testRuns.push({
@@ -299,6 +301,7 @@ function load(levelIndex) {
       setScene(initialEnv);
       resetCarPosition();
       tabs();
+      if (Argon.renderQuickKeysToolbar) Argon.renderQuickKeysToolbar(lessonData);
 
       // Hide solution leakage in student view
       $("#peek").hidden = true;

@@ -132,25 +132,27 @@ class PyErr extends Error {}
       }
 
       function parseSimpleStatement(lineObj) {
-        let match;
-        if (/^(stop|slow|go|crawl)$/.test(lineObj.s)) {
-          throw createPyError(lineObj.n, "Add round brackets to run the command: " + lineObj.s + "()");
-        }
-        if ((match = lineObj.s.match(/^([a-z_]+)\(\s*\)$/))) {
-          if (!["stop", "slow", "go", "crawl"].includes(match[1])) {
-            throw createPyError(lineObj.n, 'I don’t know the command “' + match[1] + '()”. Try stop(), slow(), crawl() or go().');
-          }
-          return { t: "call", f: match[1], n: lineObj.n };
-        }
-        if ((match = lineObj.s.match(/^([A-Za-z_]\w*)\s*=\s*([^=].*)$/))) {
-          const valFn = compileConditionExpression(match[2], knownVars, lineObj.n);
-          if (!knownVars.includes(match[1])) knownVars.push(match[1]);
-          return { t: "set", k: match[1], v: valFn, n: lineObj.n };
-        }
-        throw createPyError(lineObj.n, "I can’t read this line. Try if, elif, else, or a car command like go().");
+      let match;
+      if (Argon.isActionCommand ? Argon.isActionCommand(lineObj.s) : /^(stop|slow|go|crawl)$/.test(lineObj.s)) {
+        throw createPyError(lineObj.n, "Add round brackets to run the command: " + lineObj.s + "()");
       }
+      if ((match = lineObj.s.match(/^([a-z_]+)\(\s*\)$/))) {
+        const validCommands = Argon.getActions ? Argon.getActions() : ["stop", "slow", "go", "crawl"];
+        if (!validCommands.includes(match[1])) {
+          throw createPyError(lineObj.n, `I don't know the command '${match[1]}()'. Available commands: ${validCommands.map(c => c + "()").join(", ")}`);
+        }
+        return { t: "call", n: lineObj.n, f: match[1] };
+      }
+      if ((match = lineObj.s.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/))) {
+        const key = match[1];
+        const valFn = compileConditionExpression(match[2], knownVars, lineObj.n);
+        if (!knownVars.includes(key)) knownVars.push(key);
+        return { t: "set", n: lineObj.n, k: key, v: valFn };
+      }
+      throw createPyError(lineObj.n, "I don't understand this line. Check your spelling!");
+    }
 
-      function parseBlockAtIndent(expectedIndent) {
+    function parseBlockAtIndent(expectedIndent) {
         const statements = [];
         while (cursor < lines.length) {
           const lineObj = lines[cursor];

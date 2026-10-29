@@ -61,11 +61,24 @@ function sha256Hex(ascii) {
       return result;
     }
 
-    const TEACHER_PWD_HASH = "0c86f6fcae03526fb40c2b75d792577c7bae7143b0d8f058e237f8cacfbd8b51";
-
-function verifyTeacherPassword(inputPwd) {
-      return sha256Hex(String(inputPwd || "").trim()) === TEACHER_PWD_HASH;
+    function getTeacherPasswordHash() {
+      return (Argon.config && Argon.config.teacherPasswordHash)
+        ? Argon.config.teacherPasswordHash
+        : "0c86f6fcae03526fb40c2b75d792577c7bae7143b0d8f058e237f8cacfbd8b51";
     }
+
+    function verifyTeacherPassword(inputPwd) {
+      return sha256Hex(String(inputPwd || "").trim()) === getTeacherPasswordHash();
+    }
+
+    function setTeacherPassword(plainText) {
+      if (Argon.config) {
+        Argon.config.teacherPasswordHash = sha256Hex(String(plainText || "").trim());
+        return true;
+      }
+      return false;
+    }
+    Argon.setTeacherPassword = setTeacherPassword;
 
     function setTeacherMode(active) {
       teacherModeActive = !!active;

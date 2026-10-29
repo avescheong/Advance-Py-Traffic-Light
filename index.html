@@ -132,27 +132,8 @@
       </div>
 
       <!-- TACTILE PYTHON SYNTAX TOOLBAR -->
-      <div class="syntax-keys" id="keys">
-        <button data-i="    " title="Indent 4 spaces">⇥ Tab</button>
-        <button data-i=":">:</button>
-        <button data-i="&quot;">" "</button>
-        <button data-i="==">==</button>
-        <button data-i="=">=</button>
-        <button data-i="!=">!=</button>
-        <button data-i="&gt;">&gt;</button>
-        <button data-i="&lt;">&lt;</button>
-        <button data-i="&lt;=">&lt;=</button>
-        <button data-i="if ">if</button>
-        <button data-i="elif ">elif</button>
-        <button data-i="else:">else:</button>
-        <button data-i="and ">and</button>
-        <button data-i="or ">or</button>
-        <button data-i="not ">not</button>
-        <button class="cmd-key" data-i="go()">go()</button>
-        <button class="cmd-key" data-i="stop()">stop()</button>
-        <button class="cmd-key" data-i="slow()">slow()</button>
-        <button class="cmd-key" data-i="crawl()">crawl()</button>
-      </div>
+      <!-- Dynamic Quick-Insert Python Syntax Toolbar -->
+      <div class="syntax-keys" id="keys"></div>
 
       <!-- RUN & NEXT LEVEL CONTROLS -->
       <div class="action-row">
@@ -374,6 +355,8 @@
        ARGON MODULAR JAVASCRIPT ARCHITECTURE
        ========================================================================== -->
   <!-- 1. Core State & Global Helpers -->
+  <script src="js/core/config.js"></script>
+  <script src="js/core/actions.js"></script>
   <script src="js/core/state.js"></script>
 
   <!-- 2. Python Execution Engine (Parser & AST Interpreter) -->

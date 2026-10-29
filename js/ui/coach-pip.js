@@ -21,7 +21,7 @@ function updateCoachPipLiveFeedback(codeText) {
       // Check for common real-time syntax tips to help 10-year-olds immediately
       for (let i = 0; i < rawLines.length; i++) {
         const line = rawLines[i].trim();
-        if (/^(go|stop|slow|crawl)$/.test(line)) {
+        if (Argon.isActionCommand ? Argon.isActionCommand(line) : /^(go|stop|slow|crawl)$/.test(line)) {
           bar.classList.add("warn");
           speech.innerHTML = `<b>Coach Pip:</b> Almost there! Add round brackets <code>()</code> after <b>${line}()</b> so the car knows to run the action!`;
           return;
@@ -56,3 +56,4 @@ function updateCoachPipLiveFeedback(codeText) {
     }
 
 Argon.updateCoachPipLiveFeedback = updateCoachPipLiveFeedback;
+window.updateCoachPipLiveFeedback = updateCoachPipLiveFeedback;

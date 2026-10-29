@@ -1,6 +1,7 @@
 /**
- * Argon - Module Registry
- * Allows dynamic registration and switching of learning curriculum modules.
+ * Argon - Module Registry & Curriculum Framework
+ * Manages curriculum tracks, dynamic module switching, and lesson validation.
+ * Non-hardcoded architecture for future module extensions.
  */
 window.Argon = window.Argon || {};
 
@@ -23,7 +24,36 @@ window.Argon = window.Argon || {};
       base: lesson.base || {},
       free: !!lesson.free,
       start: lesson.starterCode || "",
+      defaultAction: lesson.defaultAction || "go",
+      requireExplicitAction: lesson.requireExplicitAction,
       sc: (lesson.tests || []).map(t => Object.assign({}, t.environment || {}, { want: t.want, label: t.label }))
+    };
+  }
+
+  /**
+   * Helper utility to create a new lesson with sensible defaults.
+   * Ensures new lessons are friendly and maintainable.
+   */
+  function createLesson(def) {
+    return {
+      id: def.id || 1,
+      title: def.title || "Untitled Mission",
+      storyProblem: def.storyProblem || "Drive safely through the intersection.",
+      concept: def.concept || "Python Basics",
+      goalChecklist: def.goalChecklist || [],
+      learnFirst: def.learnFirst || {},
+      vocabulary: def.vocabulary || [],
+      hints: def.hints || [],
+      starterCode: def.starterCode || "",
+      solution: def.solution || "",
+      variables: def.variables || [],
+      base: def.base || {},
+      tests: def.tests || [],
+      teacherExplanation: def.teacherExplanation || "",
+      commonMistakes: def.commonMistakes || [],
+      studentReflection: def.studentReflection || "I accomplished this mission!",
+      free: !!def.free,
+      quickSnippets: def.quickSnippets || []
     };
   }
 
@@ -36,6 +66,7 @@ window.Argon = window.Argon || {};
      * @param {string} [mod.description] - Overview description
      * @param {Array} mod.lessons - Array of mission objects
      * @param {Array} [mod.competencies] - Array of competency objects for badges
+     * @param {Function} [mod.onSceneUpdate] - Custom visual hook: (env, elements) => void
      */
     register(mod) {
       if (!mod || !mod.id) {
@@ -48,12 +79,14 @@ window.Argon = window.Argon || {};
         description: mod.description || "",
         lessons: mod.lessons || [],
         adaptedLessons: adaptedLessons,
-        competencies: mod.competencies || []
+        competencies: mod.competencies || [],
+        onSceneUpdate: mod.onSceneUpdate || null
       };
       modules.set(mod.id, moduleRecord);
 
-      // Default active module to first registered
-      if (!activeModuleId) {
+      // Default active module to config or first registered
+      const defaultId = Argon.config ? Argon.config.defaultModuleId : null;
+      if (!activeModuleId || (defaultId && mod.id === defaultId)) {
         activeModuleId = mod.id;
       }
 
@@ -96,6 +129,7 @@ window.Argon = window.Argon || {};
     },
 
     adaptLesson,
+    createLesson,
 
     updateModuleSelectorUI() {
       const select = document.getElementById("moduleSelect");
@@ -125,4 +159,5 @@ window.Argon = window.Argon || {};
   Argon.ModuleRegistry = ModuleRegistry;
   Argon.registerModule = mod => ModuleRegistry.register(mod);
   Argon.adaptLesson = adaptLesson;
+  Argon.createLesson = createLesson;
 })();

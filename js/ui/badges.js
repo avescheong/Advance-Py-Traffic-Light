@@ -4,8 +4,8 @@
  */
 window.Argon = window.Argon || {};
 
-const STORAGE_PREFIX = "argon_progress_";
-const LEGACY_STORAGE_KEY = "tlp_v2_learning_record";
+const STORAGE_PREFIX = Argon.config ? Argon.config.storagePrefix : "argon_progress_";
+const LEGACY_STORAGE_KEY = Argon.config ? Argon.config.legacyStorageKey : "tlp_v2_learning_record";
 
 function getActiveCompetencies() {
   const mod = Argon.ModuleRegistry ? Argon.ModuleRegistry.getActiveModule() : null;
@@ -49,7 +49,7 @@ function updateProgressHeader() {
   const lessons = Argon.ModuleRegistry && Argon.ModuleRegistry.getActiveModule()
     ? Argon.ModuleRegistry.getActiveModule().lessons
     : [];
-  const challengeCount = Math.max(1, lessons.length - 1); // exclude free sandbox
+  const challengeCount = Math.max(1, lessons.filter(l => !l.free).length);
   const completedChallenges = Array.from(done).filter(i => i < challengeCount).length;
   const pct = Math.round((completedChallenges / challengeCount) * 100);
   const comps = getActiveCompetencies();
@@ -64,7 +64,7 @@ function renderLearningRecordModal() {
   const lessons = Argon.ModuleRegistry && Argon.ModuleRegistry.getActiveModule()
     ? Argon.ModuleRegistry.getActiveModule().lessons
     : [];
-  const challengeCount = Math.max(1, lessons.length - 1);
+  const challengeCount = Math.max(1, lessons.filter(l => !l.free).length);
   const completedChallenges = Array.from(done).filter(i => i < challengeCount).length;
   $("#journeySummary").textContent = `? ${completedChallenges} of ${challengeCount} Missions Completed`;
 

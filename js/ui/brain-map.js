@@ -68,3 +68,5 @@ function highlightTraceLine(lineNum) {
 
 Argon.buildLiveBrainFlowchart = buildLiveBrainFlowchart;
 Argon.highlightTraceLine = highlightTraceLine;
+window.buildLiveBrainFlowchart = buildLiveBrainFlowchart;
+window.highlightTraceLine = highlightTraceLine;
