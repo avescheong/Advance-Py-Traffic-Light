@@ -1,0 +1,200 @@
+/* Argon - Layout, Header Navigation, Level Tabs & Responsive Grid */
+    /* ---------- Top Navigation Bar ---------- */
+    header {
+      flex: 0 0 auto;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 3px solid var(--border-strong);
+      padding: 6px 16px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+      z-index: 20;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      letter-spacing: -0.01em;
+    }
+
+    /* Module Selector for Extensible Curriculum Modules */
+    .module-selector-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .module-select {
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      border-radius: 10px;
+      border: 2px solid var(--border-strong);
+      background: var(--bg-card);
+      color: #1e3a8a;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .module-select:hover, .module-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .brand-badge {
+      font-size: 0.75rem;
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1.5px solid #93c5fd;
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+
+    /* Progress & Level Tabs Bar */
+    .header-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .level-tabs {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 3px;
+      scrollbar-width: thin;
+      flex: 1;
+    }
+
+    .level-tab {
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.82rem;
+      min-width: 36px;
+      height: 30px;
+      padding: 0 8px;
+      border-radius: 10px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      box-shadow: 0 2px 0 #cbd5e1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .level-tab:hover {
+      border-color: #60a5fa;
+      transform: translateY(-1px);
+    }
+
+    .level-tab.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary-dark);
+      box-shadow: 0 2px 0 var(--primary-dark);
+    }
+
+    .level-tab.completed:not(.active) {
+      background: #dcfce7;
+      border-color: #4ade80;
+      color: #166534;
+      box-shadow: 0 2px 0 #22c55e;
+    }
+
+    .progress-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1.5px solid #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    .progress-track {
+      width: 90px;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #22c55e, #10b981);
+      transition: width 0.35s ease;
+    }
+
+    /* ---------- Main 2-Column Interactive Workspace ---------- */
+    .workspace-grid {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1.02fr 1.08fr;
+      gap: 12px;
+      padding: 10px 14px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 920px) {
+      html, body {
+        height: auto;
+        max-height: none;
+        overflow-y: auto;
+      }
+      .workspace-grid {
+        grid-template-columns: 1fr;
+        overflow: visible;
+      }
+    }
+
+    .card-panel {
+      background: var(--bg-card);
+      border: 3px solid var(--border-strong);
+      border-radius: 20px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      scrollbar-width: thin;
+    }
+

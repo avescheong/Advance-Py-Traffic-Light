@@ -1,0 +1,198 @@
+/* Argon - Live Cognitive Brain Map Flowchart & Execution Tracer */
+    /* ---------- Live Cognitive Brain Map (Real-Time Decision Flowchart) ---------- */
+    .brain-map-card {
+      margin-top: 6px;
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 7px 10px;
+      flex-shrink: 0;
+    }
+
+    .brain-map-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 5px;
+    }
+
+    .brain-flow-nodes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      min-height: 36px;
+    }
+
+    .flow-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: 2px solid #94a3b8;
+      color: #1e293b;
+      transition: all 0.2s;
+    }
+
+    .flow-node.node-cond {
+      background: #eff6ff;
+      border-color: #60a5fa;
+      color: #1e3a8a;
+    }
+
+    .flow-node.node-act {
+      background: #f0fdf4;
+      border-color: #4ade80;
+      color: #166534;
+    }
+
+    .flow-node.node-set {
+      background: #fef3c7;
+      border-color: #fbbf24;
+      color: #92400e;
+    }
+
+    .flow-node.active-step {
+      transform: scale(1.06);
+      box-shadow: 0 0 0 3px #fbbf24;
+      border-color: #d97706;
+    }
+
+    .flow-arrow {
+      color: #64748b;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    /* Step Execution Code Trace & Thought Bubble */
+    #view {
+      min-height: 56px;
+      max-height: 105px;
+      border-radius: 12px;
+      padding: 6px 0;
+      margin-top: 6px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.84rem;
+      line-height: 1.45;
+      white-space: pre;
+      overflow-x: auto;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    #view[hidden] { display: none; }
+
+    .ln {
+      display: flex;
+      padding: 0 10px;
+      border-left: 4px solid transparent;
+    }
+
+    .ln i {
+      color: #64748b;
+      width: 2em;
+      flex: none;
+      font-style: normal;
+    }
+
+    .ln.hl {
+      background: rgba(251, 191, 36, 0.25);
+      border-left-color: #fbbf24;
+    }
+
+    .expl-box {
+      margin-top: 6px;
+      padding: 8px 11px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 2px solid #bae6fd;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #0f172a;
+      min-height: 2.3em;
+      flex-shrink: 0;
+    }
+
+    #stepbar {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    #stepbar[hidden] { display: none; }
+
+    #step {
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: 2px solid var(--primary-dark);
+      border-radius: 10px;
+      padding: 6px 14px;
+      cursor: pointer;
+      color: #ffffff;
+      background: var(--primary);
+      box-shadow: 0 3px 0 var(--primary-dark);
+    }
+
+    /* Sensor Variable Pills & Test Chips */
+    .vars-bar {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      flex-shrink: 0;
+    }
+
+    .sensor-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1.5px solid #334155;
+      font-weight: 600;
+    }
+
+    #res {
+      margin-top: 5px;
+      max-height: 90px;
+      overflow-y: auto;
+      display: grid;
+      gap: 4px;
+    }
+
+    .chip {
+      padding: 4px 9px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+    }
+
+    .legend-bar {
+      margin-top: auto;
+      padding-top: 6px;
+      font-size: 0.76rem;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+

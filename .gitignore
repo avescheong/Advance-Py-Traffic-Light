@@ -1,0 +1,7 @@
+Argon_traffic_light_python_pro_edition.html
+Argon_traffic_light_python_pro_edition.original.bak
+*.bak
+Thumbs.db
+.DS_Store
+__pycache__/
+*.log

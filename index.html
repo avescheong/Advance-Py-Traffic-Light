@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>?? Traffic Light Python ? Autonomous Coding Academy</title>
+  <!-- Google Fonts for Kid-Friendly UI & Clear Monospace Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Argon Standalone Modular CSS -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/stage.css">
+  <link rel="stylesheet" href="css/brain-map.css">
+  <link rel="stylesheet" href="css/modals.css">
+</head>
+
+<body>
+<!-- ==========================================================================
+       TOP NAVIGATION HEADER
+       ========================================================================== -->
+  <header>
+    <div class="header-top">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <h1 class="brand-title">
+        <span>🚦 Traffic Light Python</span>
+        <span class="brand-badge">🤖 Smart Car Coding Lab</span>
+      </h1>
+        <div class="module-selector-wrap">
+          <label for="moduleSelect" class="module-label" style="font-size:0.78rem;font-weight:700;color:#475569;">Module:</label>
+          <select id="moduleSelect" class="module-select" aria-label="Select Curriculum Module"></select>
+        </div>
+      </div>
+      <div class="header-controls">
+        <label style="font-size:0.78rem;font-weight:700;color:#475569;display:flex;align-items:center;gap:4px;">
+          ⚡ Sim Speed:
+          <select id="speedSelect" style="font:inherit;font-weight:700;padding:3px 6px;border-radius:8px;border:1.5px solid #cbd5e1;">
+            <option value="1.35">🐢 Slow</option>
+            <option value="1" selected>🚗 Normal</option>
+            <option value="0.45">🚀 Fast</option>
+          </select>
+        </label>
+        <button class="btn-3d btn-journey" id="journeyBtn">📋 My Python Badges</button>
+        <button class="btn-3d btn-teacher" id="teacherBtn">👩‍🏫 Teacher Mode</button>
+      </div>
+    </div>
+
+    <div class="header-sub">
+      <div class="level-tabs" id="tabs"></div>
+      <div class="progress-pill">
+        <span id="progText">0 / 15</span>
+        <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+        <span id="badgeSummary">🏅 0/7</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN 2-COLUMN INTERACTIVE WORKSPACE
+       ========================================================================== -->
+  <main class="workspace-grid">
+    <!-- LEFT PANEL: LESSON, LIVE MISSION CHECKLIST, COACH PIP & CODE EDITOR -->
+    <section class="card-panel">
+      <div class="mission-header">
+        <span class="concept-badge" id="conceptTag">📘 Concept</span>
+        <div class="helper-row" style="margin:0">
+          <button class="btn-3d" id="learnToggleBtn" style="padding:3px 9px;font-size:0.76rem;">🧠 6-Step Guide</button>
+          <button class="btn-3d" id="hintBtn" style="padding:3px 9px;font-size:0.76rem;background:#fef3c7;border-color:#f59e0b;color:#92400e;">💡 Hint 1</button>
+        </div>
+      </div>
+
+      <h2 class="mission-title" id="title">Exercise Title</h2>
+      <p class="mission-story" id="task">Story problem description...</p>
+
+      <!-- Teacher Mode Control Drawer (Hidden in Student Mode) -->
+      <div class="t-drawer" id="teacherDrawer" hidden>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:700;">
+          <span>👩‍🏫 Teacher Classroom Controls</span>
+          <button class="t-act" id="lockTeacherBtn">🔒 Exit Teacher Mode</button>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="t-act" id="tRevealBtn">1. Reveal Solution</button>
+          <button class="t-act" id="tNotesBtn">2. Teaching Notes</button>
+          <button class="t-act" id="tDemoBtn">3. Demo Step Run</button>
+          <button class="t-act" id="tTestsBtn">4. Expected Tests</button>
+          <button class="t-act" id="tResetBtn">5. Reset Student View</button>
+        </div>
+        <div class="t-out" id="teacherOut" hidden></div>
+      </div>
+
+      <!-- 6-Step Learn First Drawer -->
+      <div class="learn-drawer" id="learnDrawer" hidden></div>
+
+      <!-- Progressive Hint Panel & Vocabulary Explanation Popups -->
+      <div class="info-pop" id="hintPanel" hidden></div>
+      <div class="helper-row" id="vocabBar"></div>
+      <div class="info-pop" id="vocabPop" hidden></div>
+
+      <!-- LIVE MISSION CHECKLIST (Auto-ticks as student types!) -->
+      <div class="goal-checklist" id="goalChecklist"></div>
+
+      <!-- ROBO-COACH PIP (Live Reactive Co-Pilot) -->
+      <div class="coach-pip-bar" id="coachBar">
+        <div class="pip-avatar" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="34" height="34">
+            <line x1="24" y1="3" x2="24" y2="10" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="3" r="3" fill="#f59e0b"/>
+            <rect x="8" y="10" width="32" height="28" rx="9" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2.5"/>
+            <rect x="13" y="16" width="22" height="12" rx="5" fill="#0f172a"/>
+            <circle id="pipEyeL" cx="19" cy="22" r="3" fill="#38bdf8"/>
+            <circle id="pipEyeR" cx="29" cy="22" r="3" fill="#38bdf8"/>
+            <path id="pipMouth" d="M18 32 Q24 36 30 32" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="pip-speech" id="pipSpeech">
+          <b>Coach Pip:</b> Type in the code box below! Watch the Smart Car and Brain Map react live as you type!
+        </div>
+      </div>
+
+      <!-- Legacy compatibility elements (kept hidden) -->
+      <button id="peek" hidden style="display:none"></button>
+      <pre id="ex" hidden style="display:none"></pre>
+
+      <!-- CODE EDITOR WITH LINE NUMBERS & LIVE TYPING BADGE -->
+      <div class="editor-shell">
+        <div class="editor-gutter" id="lineGutter">1<br>2</div>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" aria-label="Type your Python code here"></textarea>
+        <div class="live-typing-badge" id="liveBadge">⚡ Live Sensor Link Ready</div>
+      </div>
+
+      <!-- TACTILE PYTHON SYNTAX TOOLBAR -->
+      <div class="syntax-keys" id="keys">
+        <button data-i="    " title="Indent 4 spaces">⇥ Tab</button>
+        <button data-i=":">:</button>
+        <button data-i="&quot;">" "</button>
+        <button data-i="==">==</button>
+        <button data-i="=">=</button>
+        <button data-i="!=">!=</button>
+        <button data-i="&gt;">&gt;</button>
+        <button data-i="&lt;">&lt;</button>
+        <button data-i="&lt;=">&lt;=</button>
+        <button data-i="if ">if</button>
+        <button data-i="elif ">elif</button>
+        <button data-i="else:">else:</button>
+        <button data-i="and ">and</button>
+        <button data-i="or ">or</button>
+        <button data-i="not ">not</button>
+        <button class="cmd-key" data-i="go()">go()</button>
+        <button class="cmd-key" data-i="stop()">stop()</button>
+        <button class="cmd-key" data-i="slow()">slow()</button>
+        <button class="cmd-key" data-i="crawl()">crawl()</button>
+      </div>
+
+      <!-- RUN & NEXT LEVEL CONTROLS -->
+      <div class="action-row">
+        <button id="run">▶ Run &amp; Watch Car</button>
+        <button class="btn-3d" id="instantRunBtn" title="Run all tests quickly">⚡ Fast Check</button>
+        <button class="btn-3d" id="resetCodeBtn" title="Reset starter code">↺ Reset Code</button>
+        <button id="next" hidden>Next Mission ➜</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
+      <div class="info-pop" id="reflBox" style="background:#dcfce7;border-color:#22c55e;color:#166534;margin-top:6px;" hidden></div>
+    </section>
+
+    <!-- RIGHT PANEL: 2.5D INTERACTIVE CITY SCENE, LIVE BRAIN FLOWCHART & STEP TRACER -->
+    <section class="card-panel">
+      <!-- 2.5D VECTOR CITY INTERSECTION STAGE -->
+      <div class="scene-stage" id="sceneStage">
+        <div class="rain-overlay"></div>
+
+        <!-- Drifting Clouds & Sun/Rain Icon -->
+        <div class="cloud-layer" aria-hidden="true">
+          <svg class="cloud-svg" style="top:12px;left:10%;width:72px;" viewBox="0 0 100 50">
+            <path d="M25 40 H78 A15 15 0 0 0 80 12 A22 22 0 0 0 38 8 A18 18 0 0 0 25 40 Z" fill="#ffffff"/>
+          </svg>
+          <svg class="cloud-svg" style="top:24px;left:55%;width:58px;animation-duration:29s;" viewBox="0 0 100 50">
+            <path d="M25 40 H78 A15 15 0 0 0 80 12 A22 22 0 0 0 38 8 A18 18 0 0 0 25 40 Z" fill="#ffffff"/>
+          </svg>
+        </div>
+
+        <div id="sunE" style="position:absolute;right:12px;top:6px;font-size:26px;z-index:4;">☀️</div>
+
+        <!-- City Skyline & Trees SVG Backdrop -->
+        <svg class="city-backdrop" viewBox="0 0 600 80" preserveAspectRatio="none" aria-hidden="true">
+          <!-- Distant Buildings -->
+          <rect x="20" y="18" width="45" height="62" rx="3" fill="#93c5fd" opacity="0.65"/>
+          <rect x="72" y="8" width="54" height="72" rx="3" fill="#60a5fa" opacity="0.55"/>
+          <rect x="135" y="25" width="40" height="55" rx="3" fill="#93c5fd" opacity="0.65"/>
+          <rect x="420" y="14" width="58" height="66" rx="3" fill="#60a5fa" opacity="0.55"/>
+          <rect x="488" y="24" width="48" height="56" rx="3" fill="#93c5fd" opacity="0.65"/>
+          <!-- Park Trees -->
+          <circle cx="215" cy="54" r="18" fill="#16a34a"/>
+          <rect x="212" y="64" width="6" height="16" fill="#78350f"/>
+          <circle cx="330" cy="56" r="15" fill="#15803d"/>
+          <rect x="328" y="65" width="5" height="15" fill="#78350f"/>
+        </svg>
+
+        <!-- Speedometer HUD -->
+        <svg class="gauge-hud" id="gauge" viewBox="0 0 120 78" style="display:none" aria-hidden="true">
+          <path d="M14 60A46 46 0 0 1 56 14.5" stroke="#22c55e" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M56 14.5A46 46 0 0 1 106 60" stroke="#ef4444" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <text x="54" y="11" font-size="9" font-weight="700" text-anchor="middle" fill="#fbbf24">50 LIMIT</text>
+          <g id="needle" style="transform-origin:60px 60px;transition:transform 0.7s cubic-bezier(.3,1.4,.5,1)">
+            <line x1="60" y1="60" x2="20" y2="60" stroke="#f8fafc" stroke-width="3.5" stroke-linecap="round"/>
+          </g>
+          <circle cx="60" cy="60" r="5" fill="#38bdf8"/>
+          <text id="gnum" x="60" y="75" font-size="11" font-weight="700" text-anchor="middle" fill="#f8fafc">0 km/h</text>
+        </svg>
+
+        <!-- School / Ambulance Siren Badge -->
+        <div class="deco-badge" id="deco"></div>
+
+        <!-- Road & Crosswalk -->
+        <div class="road-surface">
+          <div class="road-lane-stripes"></div>
+          <div class="stop-line-glow" id="stopLine"></div>
+          <div class="zebra-crossing" id="zebraCross"></div>
+        </div>
+
+        <!-- Traffic Light Gantry -->
+        <div class="traffic-gantry" id="trafficPole">
+          <div class="lamp" id="l-red"></div>
+          <div class="lamp" id="l-yellow"></div>
+          <div class="lamp" id="l-green"></div>
+        </div>
+
+        <!-- Crosswalk Pedestrian / Cone -->
+        <div class="walker" id="walker" hidden>🚶</div>
+
+        <!-- Dynamic Speech / Status Bubble -->
+        <div class="scene-bubble" id="bubble"></div>
+
+        <!-- Expressive Autonomous Smart Car SVG -->
+        <div class="smart-car-wrap" id="car">
+          <div class="lidar-wave"></div>
+          <svg viewBox="0 0 130 68" width="106" height="58" aria-hidden="true">
+            <!-- Headlight Beam Cone -->
+            <polygon class="headlight-cone" points="104,38 130,26 130,54" fill="url(#beamGrad)"/>
+            <defs>
+              <linearGradient id="beamGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#fef08a" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Red Brake Tail Glow -->
+            <circle class="brake-glow" cx="10" cy="40" r="10" fill="#ef4444" opacity="0.65"/>
+
+            <!-- Turtle Crawl Mode Badge on Roof -->
+            <g class="turtle-badge" transform="translate(26, 2)">
+              <rect x="0" y="0" width="28" height="16" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="14" y="12" font-size="11" text-anchor="middle">🐢</text>
+            </g>
+
+            <!-- Roof LiDAR Sensor Dome -->
+            <rect x="52" y="10" width="14" height="6" rx="3" fill="#0f172a"/>
+            <circle id="lidarDome" cx="59" cy="10" r="4.5" fill="#38bdf8"/>
+
+            <!-- Car Body Chassis -->
+            <path d="M24 32 L38 16 H78 L94 32 Z" fill="#f87171" stroke="#dc2626" stroke-width="2"/>
+            <rect x="8" y="30" width="98" height="22" rx="10" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+
+            <!-- Windows & Expressive Car Eye -->
+            <path d="M30 30 L40 19 H60 V30 Z" fill="#e0f2fe"/>
+            <path d="M64 19 H76 L88 30 H64 Z" fill="#bae6fd"/>
+            <circle id="carEye" cx="76" cy="25" r="3.2" fill="#0f172a"/>
+            <circle cx="77" cy="24" r="1.1" fill="#ffffff"/>
+
+            <!-- Taillight & Headlight -->
+            <rect x="8" y="34" width="5" height="9" rx="2" fill="#fca5a5"/>
+            <rect x="101" y="35" width="5" height="8" rx="2" fill="#fde047"/>
+
+            <!-- Wheels -->
+            <g>
+              <circle cx="30" cy="52" r="10" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+              <circle cx="30" cy="52" r="4.5" fill="#94a3b8"/>
+              <circle cx="84" cy="52" r="10" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+              <circle cx="84" cy="52" r="4.5" fill="#94a3b8"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Road Ruler (Appears on Distance missions) -->
+      <div class="ruler-box" id="ruler" hidden>
+        <div class="ruler-title">
+          <span>📏 Laser Distance Ruler (Meters to Car Ahead)</span>
+          <span id="rulerZoneTag" style="color:#d97706;">Safety Sensor Active</span>
+        </div>
+        <div class="ruler-track" id="rtrack">
+          <div class="distance-span" id="span"><span id="dlab">0 m</span></div>
+          <div class="rc" id="me">🚗</div>
+          <div class="rc" id="lead">🚙</div>
+        </div>
+      </div>
+
+      <!-- LIVE COGNITIVE BRAIN MAP (Updates live as the kid types!) -->
+      <div class="brain-map-card">
+        <div class="brain-map-hdr">
+          <span>🧠 Smart Car's Live Decision Brain (Updates as you type!)</span>
+          <span id="brainStatusTag" style="color:#2563eb;">Live Preview</span>
+        </div>
+        <div class="brain-flow-nodes" id="brainFlow"></div>
+      </div>
+
+      <!-- Step-by-Step Code Trace View -->
+      <div id="view" hidden></div>
+
+      <!-- Cognitive Thought Explanation Box -->
+      <div class="expl-box" id="expl">
+        ✨ Type your Python code on the left—watch the car &amp; brain map respond live, then press <b>Run &amp; Watch Car</b>!
+      </div>
+
+      <!-- Step Execution Controls -->
+      <div id="stepbar" hidden>
+        <button id="step">Next Step ▶</button>
+        <button class="btn-3d" id="autoPlayBtn">▶ Auto-Play Steps</button>
+        <button class="btn-3d" id="skip">⏭ Skip to Results</button>
+        <button class="btn-3d" id="edit">✏️ Back to Edit Code</button>
+      </div>
+
+      <!-- Active Road Sensors Bar -->
+      <div class="vars-bar" id="vars"></div>
+
+      <!-- Test Scenario Results -->
+      <div id="res"></div>
+
+      <!-- Car Commands Legend -->
+      <div class="legend-bar">
+        <span>🛑 <b>stop()</b> brake now</span>
+        <span>🟡 <b>slow()</b> gentle stop</span>
+        <span>🐢 <b>crawl()</b> slow speed</span>
+        <span>🟢 <b>go()</b> drive forward</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       MODALS: STUDENT BADGES JOURNEY & TEACHER MODE AUTHENTICATION
+       ========================================================================== -->
+  <div class="modal-bg" id="journeyModal" hidden>
+    <div class="modal-box">
+      <button class="modal-x" id="closeJourneyBtn">✕</button>
+      <h3 style="margin:0 0 6px;color:#1e3a8a;">📋 My Autonomous Python Badges</h3>
+      <p style="margin:0 0 10px;color:#475569;font-size:0.88rem;">Complete missions to earn your Autonomous Driving Engineer badges!</p>
+      <div id="journeySummary" style="font-weight:700;margin-bottom:8px;"></div>
+      <div id="skillList" style="display:grid;gap:6px;margin:10px 0;"></div>
+      <div style="margin-top:10px;font-weight:700;font-size:0.9rem;">🏅 Earned Achievement Badges:</div>
+      <div class="badge-grid" id="badgeGrid"></div>
+      <div id="nextSkillBanner" style="margin-top:12px;padding:10px;border-radius:10px;background:#f0f9ff;border:1.5px solid #bae6fd;font-size:0.88rem;"></div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="teacherModal" hidden>
+    <div class="modal-box">
+      <button class="modal-x" id="closeTeacherBtn">✕</button>
+      <h3 style="margin:0 0 6px;color:#92400e;">👩‍🏫 Teacher Mode Authentication</h3>
+      <p style="margin:0 0 12px;color:#475569;font-size:0.88rem;">Enter the teacher passcode to unlock canonical solutions, teaching notes, and classroom demonstrations.</p>
+      <form id="teacherAuthForm" onsubmit="return false;">
+        <input type="password" id="teacherPwdInput" placeholder="Enter teacher password" autocomplete="off" style="width:100%;height:42px;padding:0 12px;border:2px solid #cbd5e1;border-radius:10px;font:inherit;margin-bottom:10px;">
+        <div style="display:flex;justify-content:flex-end;">
+          <button type="submit" class="btn-3d btn-teacher unlocked" id="teacherUnlockSubmit">Unlock Teacher Mode</button>
+        </div>
+        <div id="teacherAuthError" style="color:#dc2626;font-size:0.86rem;font-weight:700;margin-top:8px;" hidden>Incorrect password. Please try again.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ARGON MODULAR JAVASCRIPT ARCHITECTURE
+       ========================================================================== -->
+  <!-- 1. Core State & Global Helpers -->
+  <script src="js/core/state.js"></script>
+
+  <!-- 2. Python Execution Engine (Parser & AST Interpreter) -->
+  <script src="js/engine/parser.js"></script>
+  <script src="js/engine/interpreter.js"></script>
+
+  <!-- 3. Simulation & Stage Controllers -->
+  <script src="js/simulation/scene.js"></script>
+  <script src="js/simulation/car.js"></script>
+
+  <!-- 4. UI Components & Reactive Subsystems -->
+  <script src="js/ui/coach-pip.js"></script>
+  <script src="js/ui/checklist.js"></script>
+  <script src="js/ui/brain-map.js"></script>
+  <script src="js/ui/reactions.js"></script>
+  <script src="js/ui/editor.js"></script>
+  <script src="js/ui/badges.js"></script>
+  <script src="js/ui/teacher.js"></script>
+  <script src="js/ui/test-runner.js"></script>
+
+  <!-- 5. Curriculum Modules & Registry -->
+  <script src="js/modules/module-registry.js"></script>
+  <script src="js/modules/traffic-light/lessons.js"></script>
+  <script src="js/modules/traffic-light/index.js"></script>
+  <!-- Example: Uncomment line below to activate Module 2 (Smart Pedestrian & Sensor Safety) -->
+  <!-- <script src="js/modules/smart-pedestrian/index.js"></script> -->
+
+  <!-- 6. Application Lifecycle & Bootstrap -->
+  <script src="js/app.js"></script>
+</body>
+</html>
